@@ -5,10 +5,12 @@
 #include <FS.h>
 
 ESP8266WebServer server(80);
+ESP8266WiFiMulti wifiMulti;
+
 
 const char *ssid = "Jumpitt Labs";
 const char *password = "Jumpitt2015";
-const char *mdnsName = "uxswitch1";
+const char *mdnsName = "uxrelay1";
 
 bool state = false;
 
@@ -29,20 +31,19 @@ void loop() {
 }
 
 void startWiFi() {
-  WiFi.begin(ssid, password);
-  Serial.print("Connecting to ");
-  Serial.print(ssid);
-  Serial.println(" ...");
+  WiFi.mode(WIFI_STA);
+  wifiMulti.addAP("Jumpitt Labs", "Jumpitt2015");
+  wifiMulti.addAP("VTR-7236151", "hw9wcXhtHsm4");
 
-  int i = 0;
-  while (WiFi.status() != WL_CONNECTED) {
+  Serial.print("Connecting Wifi...");
+  while (wifiMulti.run() != WL_CONNECTED) {
+    Serial.print(".");
     delay(1000);
-    Serial.print('.');
   }
 
-  Serial.println('\n');
-  Serial.println("Connection established!");
-  Serial.print("IP address:\t");
+  Serial.println("");
+  Serial.println("WiFi connected");
+  Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
 }
 
@@ -69,4 +70,3 @@ void startServer() {
   server.begin();
   Serial.println("HTTP server started.");
 }
-
